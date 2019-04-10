@@ -7,8 +7,6 @@
 			- Maybe fit it on the can itself?
 			- Button to toggle calibration mode
 			- Debug LED
-		- Move debug LED to its own pin.
-		- Add calibration mode that's toggled by the button. This turns on power to the sensor until clicked again or powered down.
 		
 */
 

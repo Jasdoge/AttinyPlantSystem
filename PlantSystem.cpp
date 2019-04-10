@@ -15,15 +15,29 @@ void PlantSystem::ini(){
 	pinMode(pin_pump, OUTPUT);
 	pinMode(pin_sensor_output, OUTPUT);
 	pinMode(pin_sensor_input, INPUT);
+	pinMode(pin_config_button, INPUT);
+	pinMode(pin_debug_led, OUTPUT);
 	digitalWrite(pin_pump, LOW);
 	digitalWrite(pin_sensor_output, LOW);
+	digitalWrite(pin_debug_led, HIGH);		// Connected on cathode
+	is_debug_mode = digitalRead(pin_config_button) == LOW;
 
+	if( is_debug_mode ){
+
+		digitalWrite(pin_sensor_output, HIGH);
+		bool h = false;
+		for( uint8_t i=0; i<5; ++i ){
+			h = !h;
+			digitalWrite(pin_debug_led, h);
+			delay(250);
+		}
+	}
 }
 
 void PlantSystem::togglePump( bool on ){
 	
 	digitalWrite(pin_pump, on);
-	//digitalWrite(pin_debug_led, on);
+	digitalWrite(pin_debug_led, !on);
 	if( on )
 		pump_started = millis();
 	else
@@ -55,6 +69,8 @@ void PlantSystem::sleep(){
 
 	pinMode(pin_sensor_input, OUTPUT);
 	digitalWrite(pin_sensor_input, LOW);
+	pinMode(pin_config_button, OUTPUT);
+	digitalWrite(pin_config_button, LOW);
 
 
 	int cycles;
@@ -69,6 +85,12 @@ void PlantSystem::sleep(){
 void PlantSystem::loop(){
 
 	const long ms = millis();
+
+	if( is_debug_mode ){
+		delay(1000);
+		return;
+	}
+
 
 	// Stop the pump if started and reached the end of the cycle
 	if( pump_started && pump_started+water_duration < ms ){
