@@ -2,7 +2,7 @@
 A project for converting a windshield wiper jug to an automatic plant waterer
 Video:
 
-[![View the making of here](https://img.youtube.com/vi/axagDO8AKSI/0.jpg)](https://www.youtube.com/watch?v=axagDO8AKSI)
+[![View the making of here](https://img.youtube.com/vi/Fqjugu2UjO8/0.jpg)](https://www.youtube.com/watch?v=Fqjugu2UjO8)
 
 Circuit and mesh files can be found in the parts directory. The cap I printed was made for the OKQ8 windshield wiper fluid jug. So if you're intending on copying this project, you'll likely want to design your own. I've supplied the 3d models for reference.
 
