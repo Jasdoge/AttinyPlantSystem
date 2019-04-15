@@ -3,6 +3,7 @@
 #include "PlantSystem.h"
 #include <avr/sleep.h>
 #include <avr/wdt.h>
+#include <Arduino.h>
 
 #define adc_disable() ADCSRA &= ~ bit(ADEN) // disable ADC (before power-off)
 #define adc_enable()  (ADCSRA |=  (1<<ADEN)) // re-enable ADC
@@ -25,7 +26,7 @@ void PlantSystem::ini(){
 	if( is_debug_mode ){
 
 		digitalWrite(pin_sensor_output, HIGH);
-		bool h = false;
+		bool h = true;	// LED lights while LOW, so start at HIGH
 		for( uint8_t i=0; i<5; ++i ){
 			h = !h;
 			digitalWrite(pin_debug_led, h);

@@ -1,20 +1,9 @@
-/*
-	Todo:
-		- Design case
-			- 3pin connector for sensor
-			- 2 pin connector for battery
-			- 2 pin connector for motor
-			- Maybe fit it on the can itself?
-			- Button to toggle calibration mode
-			- Debug LED
-		
-*/
-
 #define ATTINY
 
 #include <arduino.h>
 #include "PlantSystem.h"
 #include <avr/wdt.h>
+#include "Arduino.h"
 ISR(WDT_vect) {
 	wdt_disable();  // disable watchdog
 }

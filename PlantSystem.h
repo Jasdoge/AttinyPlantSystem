@@ -1,5 +1,6 @@
 #ifndef PlantSystem_h
 #define PlantSystem_h
+#include <Arduino.h>
 
 // Attiny85
 #define PIN_PUMP 4
@@ -8,7 +9,8 @@
 #define PIN_DEBUG_LED 3
 #define PIN_CONFIG_BUTTON 2
 
-#include <arduino.h>
+
+
 class PlantSystem{
 
 	public:
