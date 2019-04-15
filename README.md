@@ -10,6 +10,7 @@ Parts used:
 
 | Part | Amount | Where I bought mine |
 |---|---|---|
+| Empty, washed windshield wiper fluid jug | 1 | Gas station. I use a 4L one by OKQ8. |
 | 0.1uF Ceramic capacitor | 1 | Generic component, sold in most component stores |
 | 10uF Capacitor | 1 | Generic component, sold in most component stores |
 | 100uF+ Capacitor | 1 | Generic component, sold in most component stores |
