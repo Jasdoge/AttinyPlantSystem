@@ -23,27 +23,40 @@ void PlantSystem::ini(){
 	digitalWrite(pin_debug_led, HIGH);		// Connected on cathode
 	is_debug_mode = digitalRead(pin_config_button) == LOW;
 
-	if( is_debug_mode ){
+	byte flashes = 2;
+	if( is_debug_mode )
+		flashes = 5;
 
-		digitalWrite(pin_sensor_output, HIGH);
-		bool h = true;	// LED lights while LOW, so start at HIGH
-		for( uint8_t i=0; i<5; ++i ){
-			h = !h;
-			digitalWrite(pin_debug_led, h);
-			delay(250);
-		}
+	digitalWrite(pin_sensor_output, HIGH);
+	bool h = true;	// LED lights while LOW, so start at HIGH
+	for( uint8_t i=0; i<flashes; ++i ){
+
+		h = !h;
+		digitalWrite(pin_debug_led, h);
+		delay(250);
+
 	}
+
 }
 
 void PlantSystem::togglePump( bool on ){
 	
-	digitalWrite(pin_pump, on);
-	digitalWrite(pin_debug_led, !on);
-	if( on )
-		pump_started = millis();
-	else
-		pump_started = 0;
 	
+	digitalWrite(pin_debug_led, !on);
+	if( on ){
+		pump_started = millis();
+		// Fade in over ~0.5 sec
+		byte i;
+		for( i=1; i<=50; ++i ){
+			float perc = (float)i/50;
+			analogWrite(pin_pump, (int)(perc*255));
+			delay(10);
+		}
+	}
+	else{
+		pump_started = 0;
+		digitalWrite(pin_pump, LOW);
+	}
 }
 
 // Starts watering the plants

@@ -3,9 +3,9 @@
 #include <Arduino.h>
 
 // Attiny85
-#define PIN_PUMP 4
+#define PIN_PUMP 0
 #define PIN_SENSOR_OUTPUT 1
-#define PIN_SENSOR_INPUT 0
+#define PIN_SENSOR_INPUT 4
 #define PIN_DEBUG_LED 3
 #define PIN_CONFIG_BUTTON 2
 
