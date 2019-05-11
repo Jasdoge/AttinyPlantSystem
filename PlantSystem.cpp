@@ -16,7 +16,7 @@ void PlantSystem::ini(){
 	pinMode(pin_pump, OUTPUT);
 	pinMode(pin_sensor_output, OUTPUT);
 	pinMode(pin_sensor_input, INPUT);
-	pinMode(pin_config_button, INPUT);
+	pinMode(pin_config_button, INPUT_PULLUP);
 	pinMode(pin_debug_led, OUTPUT);
 	digitalWrite(pin_pump, LOW);
 	digitalWrite(pin_sensor_output, LOW);
