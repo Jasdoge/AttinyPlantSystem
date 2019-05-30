@@ -1,14 +1,19 @@
 #define ATTINY
-
+// #include <Arduino.h>
 #include "PlantSystem.h"
 #include <avr/sleep.h>
 #include <avr/wdt.h>
-#include <Arduino.h>
 
 #define adc_disable() ADCSRA &= ~ bit(ADEN) // disable ADC (before power-off)
 #define adc_enable()  (ADCSRA |=  (1<<ADEN)) // re-enable ADC
 
+// Captures wakeup
+ISR(WDT_vect) {
+	wdt_disable();  // disable watchdog
+}
+
 PlantSystem::PlantSystem(){}
+
 
 void PlantSystem::ini(){
 
@@ -23,13 +28,10 @@ void PlantSystem::ini(){
 	digitalWrite(pin_debug_led, HIGH);		// Connected on cathode
 	is_debug_mode = digitalRead(pin_config_button) == LOW;
 
-	byte flashes = 2;
-	if( is_debug_mode )
-		flashes = 5;
-
+	byte flashes = is_debug_mode ? 5 : 2;
 	digitalWrite(pin_sensor_output, HIGH);
 	bool h = true;	// LED lights while LOW, so start at HIGH
-	for( uint8_t i=0; i<flashes; ++i ){
+	for( byte i=0; i<flashes; ++i ){
 
 		h = !h;
 		digitalWrite(pin_debug_led, h);
@@ -46,10 +48,8 @@ void PlantSystem::togglePump( bool on ){
 	if( on ){
 		pump_started = millis();
 		// Fade in over ~0.5 sec
-		byte i;
-		for( i=1; i<=50; ++i ){
-			float perc = (float)i/50;
-			analogWrite(pin_pump, (int)(perc*255));
+		for( byte i=0; i<=255; i=i+5 ){
+			analogWrite(pin_pump, i);
 			delay(10);
 		}
 	}
@@ -59,18 +59,11 @@ void PlantSystem::togglePump( bool on ){
 	}
 }
 
-// Starts watering the plants
-void PlantSystem::waterPlants(){
-	togglePump(true);
-}
 
-
-void PlantSystem::enableWatchdog(const byte interval){  
-
+void PlantSystem::enableWatchdog(){  
 	MCUSR = 0;                          // reset various flags
 	WDTCR |= 0b00011000;               // see docs, set WDCE, WDE
-	WDTCR =  0b01000000 | interval;    // set WDIE, and appropriate delay
-
+	WDTCR =  0b01100001;    			// set WDIE, and 8s delay
 	wdt_reset();
 	set_sleep_mode (SLEEP_MODE_PWR_DOWN);  
 	sleep_mode();            // now goes to Sleep and waits for the interrupt
@@ -86,10 +79,8 @@ void PlantSystem::sleep(){
 	pinMode(pin_config_button, OUTPUT);
 	digitalWrite(pin_config_button, LOW);
 
-
-	int cycles;
-	for( cycles = 0; cycles < num_sleep_cycles; ++cycles )
-		enableWatchdog(0b100001);
+	for( int cycles = 0; cycles < num_sleep_cycles; ++cycles )
+		enableWatchdog();
 
 	// restart
 	ini();
@@ -118,7 +109,7 @@ void PlantSystem::loop(){
 	if( !pump_started ){
 
 		digitalWrite(pin_sensor_output, HIGH);
-		delay(1);
+		delay(10);
 		const bool reading = digitalRead(pin_sensor_input);
 		digitalWrite(pin_sensor_output, LOW);
 
@@ -128,7 +119,7 @@ void PlantSystem::loop(){
 
 		// It's dry, start watering
 		if( reading == dry_on )
-			waterPlants();	
+			togglePump(true);
 		// It's not dry, sleep
 		else
 			sleep();
@@ -138,6 +129,3 @@ void PlantSystem::loop(){
 	
 	
 }
-
-
-extern PlantSystem pSystem = PlantSystem();
