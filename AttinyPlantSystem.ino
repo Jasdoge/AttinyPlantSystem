@@ -1,8 +1,6 @@
 #define ATTINY
 
-//#include <arduino.h>
 #include "PlantSystem.h"
-//#include "Arduino.h"
 
 PlantSystem pSystem;
 
