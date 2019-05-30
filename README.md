@@ -4,6 +4,8 @@ Video:
 
 [![View the making of here](https://img.youtube.com/vi/Fqjugu2UjO8/0.jpg)](https://www.youtube.com/watch?v=Fqjugu2UjO8)
 
+**Update**: Added an Attiny13 branch which will run on the same hardware (except the MCU obviously).
+
 Circuit and mesh files can be found in the parts directory. The cap I printed was made for the OKQ8 windshield wiper fluid jug. So if you're intending on copying this project, you'll likely want to design your own. I've supplied the 3d models for reference.
 
 Parts used:
