@@ -8,12 +8,18 @@
 #define pin_config_button 2
 
 #define water_duration 10000
-#define num_sleep_cycles 75
+#define num_sleep_cycles 450	// 8 sec each, 450 = 1h
 
 #define dry_on HIGH
 
 #define adc_disable() ADCSRA &= ~ bit(ADEN) // disable ADC (before power-off)
 #define adc_enable()  (ADCSRA |=  (1<<ADEN)) // re-enable ADC
+
+#define BLINKS_SLEEP 1
+#define BLINKS_LIVE 2
+#define BLINKS_PUMP_ON 3
+#define BLINKS_DEBUG 5
+
 
 // Configuration
 bool is_debug_mode = false;
@@ -61,7 +67,7 @@ void psInit(){
 	digitalWrite(pin_debug_led, HIGH);		// Connected on cathode
 	is_debug_mode = digitalRead(pin_config_button) == LOW;
 
-	byte flashes = is_debug_mode ? 5 : 2;
+	byte flashes = is_debug_mode ? BLINKS_DEBUG : BLINKS_LIVE;
 	digitalWrite(pin_sensor_output, HIGH);
 	psBlink(flashes);
 
@@ -71,6 +77,8 @@ void psInit(){
 void psSleep(){
 
 	togglePump(false);
+
+	psBlink(BLINKS_SLEEP);
 
 	pinMode(pin_sensor_input, OUTPUT);
 	digitalWrite(pin_sensor_input, LOW);
@@ -85,33 +93,11 @@ void psSleep(){
 
 }
 
-// Reads the water level
-void psCheck(){
-
-	digitalWrite(pin_sensor_output, HIGH);
-	digitalWrite(pin_debug_led, LOW);
-	delay(1000);
-	const bool reading = digitalRead(pin_sensor_input);
-	delay(10);
-	digitalWrite(pin_sensor_output, LOW);
-
-	// It's dry, start watering
-	if( reading == dry_on )
-		togglePump(true);
-	// It's not dry, sleep
-	else
-		psSleep();
-
-}
-
-
-
-
 void togglePump( bool on ){
 
 	if( on ){
 
-		psBlink(3);
+		psBlink(BLINKS_PUMP_ON);
 		// Fade in over ~0.5 sec
 		for( byte i=0; i<=250; i=i+2 ){
 			analogWrite(pin_pump, i);
@@ -127,6 +113,29 @@ void togglePump( bool on ){
 	
 
 }
+
+// Reads the water level
+void psCheck(){
+
+	digitalWrite(pin_sensor_output, HIGH);
+	delay(50);
+	const bool reading = digitalRead(pin_sensor_input);
+	delay(1);
+	digitalWrite(pin_sensor_output, LOW);
+
+	// It's dry, start watering
+	if( reading == dry_on )
+		togglePump(true);
+	// It's not dry, sleep
+	else
+		psSleep();
+
+}
+
+
+
+
+
 
 
 
