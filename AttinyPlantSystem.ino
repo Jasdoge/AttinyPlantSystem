@@ -1,5 +1,13 @@
+/*
+	Note: When using DIY ATtiny, millis must be enabled
+*/
 #include <avr/sleep.h>
 #include <avr/wdt.h>
+
+#define SLEEP_1S 0b000110
+#define SLEEP_2S 0b000111
+#define SLEEP_4S 0b100000
+#define SLEEP_8S 0b100001
 
 #define pin_pump 0
 #define pin_sensor_output 1
@@ -8,7 +16,7 @@
 #define pin_config_button 2
 
 #define water_duration 10000
-#define num_sleep_cycles 450	// 8 sec each, 450 = 1h
+#define num_sleep_cycles 400	// 8 sec each, 450 = 1h
 
 #define dry_on HIGH
 
@@ -31,10 +39,10 @@ ISR(WDT_vect) {
 	wdt_disable();  // disable watchdog
 }
 
-void enableWatchdog(){  
+void enableWatchdog(){
 	MCUSR = 0;                          // reset various flags
 	WDTCR |= 0b00011000;               // see docs, set WDCE, WDE
-	WDTCR =  0b01100001;    			// set WDIE, and 8s delay
+	WDTCR =  0b01000000 | SLEEP_8S;    			// set WDIE, and 8s delay
 	wdt_reset();
 	set_sleep_mode (SLEEP_MODE_PWR_DOWN);  
 	sleep_mode();            // now goes to Sleep and waits for the interrupt
