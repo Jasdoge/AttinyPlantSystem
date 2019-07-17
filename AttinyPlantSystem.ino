@@ -4,18 +4,20 @@
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 
+#define water_duration 5000		// How long to water in milliseconds.
+
 #define SLEEP_1S 0b000110
 #define SLEEP_2S 0b000111
 #define SLEEP_4S 0b100000
 #define SLEEP_8S 0b100001
 
 #define pin_pump 0
-#define pin_sensor_output 1
+#define pin_sensor_output 1				// Turns on voltage to the sensor
 #define pin_sensor_input 4
 #define pin_debug_led 3
 #define pin_config_button 2
 
-#define water_duration 10000
+
 #define num_sleep_cycles 400	// 8 sec each, 450 = 1h
 
 #define dry_on HIGH
@@ -106,13 +108,18 @@ void togglePump( bool on ){
 	if( on ){
 
 		psBlink(BLINKS_PUMP_ON);
-		// Fade in over ~0.5 sec
-		for( byte i=0; i<=250; i=i+2 ){
+		// Fade in
+		for( byte i=0; i<255; ++i ){
 			analogWrite(pin_pump, i);
 			delay(5);
 		}
+		psBlink(1);
+
 		digitalWrite(pin_pump, HIGH);
-		delay(water_duration);
+		
+		int dur = water_duration-255*5/2;
+		if( dur > 0 )
+			delay(water_duration);
 		psSleep();
 
 	}
@@ -126,7 +133,7 @@ void togglePump( bool on ){
 void psCheck(){
 
 	digitalWrite(pin_sensor_output, HIGH);
-	delay(50);
+	delay(1000);
 	const bool reading = digitalRead(pin_sensor_input);
 	delay(1);
 	digitalWrite(pin_sensor_output, LOW);
